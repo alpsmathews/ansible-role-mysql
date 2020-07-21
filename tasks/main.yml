@@ -1,0 +1,30 @@
+---
+    - name: Install MySQL database
+      yum:
+        name: http://repo.mysql.com/yum/mysql-cluster-8.0-community/docker/x86_64/mysql-cluster-community-minimal-debuginfo-8.0.21-1.el7.x86_64.rpm
+        state: present
+
+    - name: Install MySQL database
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "mysql-server"
+        - "mysql-client"
+
+    - name: Start MySQL service
+      service:
+        name: MySQL
+        state: started
+        enabled: yes
+
+    - name: Create Application Database
+      mysql_db: name={{ db_name }} state=present
+
+    - name: Create database user
+      mysql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_user_password }}"
+        priv: '*.*:ALL'
+        state: present
+        host: '%'
